@@ -11,11 +11,11 @@
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
 
-    <body class="h-screen w-screen text-white bg-slate-900">
+    <body class="w-screen text-white bg-slate-900">
 
         <div class="p-2">
 
-            <nav class="mt-2 px-6 py-3 bg-gray-800 flex justify-between items-center rounded-full">
+            <nav class="w-4/5 mx-auto mt-2 px-6 py-3 bg-gray-800 flex justify-between items-center rounded-full">
                 <a href="{% url 'core:home' %}"  class="text-xl font-semibold">BookMyHotel</a>
 
                 <div class="flex items-center space-x-4">
@@ -27,13 +27,13 @@
                     {% endif %}
 
                     {% if request.user.is_staff %}
-                        <a href="" class="inline-block px-3 py-2 text-sm bg-gray-600 rounded-full hover:bg-gray-700">Chat admin</a>
+                        <a href="{% url 'support:chat-admin' %}" class="inline-block px-3 py-2 text-sm bg-gray-600 rounded-full hover:bg-gray-700">Chat admin</a>
                     {% endif %}
                 </div>
             </nav>
 
             {% if messages %}
-                <div class="message mb-3 mt-2 px-3 py-2 text-center bg-gray-800 rounded-full">
+                <div class="message w-max mx-auto mt-2 px-10 py-2 text-center bg-gray-800 rounded-full">
                     {% for message in messages %}
                         <p>{{ message }}</p>
                     {% endfor %}
@@ -46,17 +46,33 @@
             {% block content %}
 
             {% endblock %}
+
+            {% if not request.user.is_staff %}
+                {% include 'support/partials/bubble_chat.html' %}
+            {% endif %}
         </main>
 
-        <footer class="absolute w-full py-6 px-6 bottom-0 bg-gray-600 text-white text-center text-xs">
+        <footer class="w-full py-6 px-6 bottom-0 bg-gray-600 text-white text-center text-xs">
             <p>Copyright (c) 2023 - Book My Hotel</p>
         </footer>
 
-        <!-- <script src="{% static 'js/main.js' %}"></script> -->
+        {% if request.user.is_authenticated %}
+
+            {{request.user.name|json_script:'user_name'}}
+            {{request.user.id|json_script:'user_id'}}
+
+        {% endif %}
+
 
         {% block scripts %}
 
-        {% endblock %}   
+        {% endblock %}
+
+
+        {% if not request.user.is_staff %}
+            <script src="{% static 'js/main.js' %}"></script>
+        {% endif %}
+        
     </body>
 
 </html>
